@@ -1,2 +1,2 @@
 # GYMBRO
-Gym app to track exercise
+Gym app to track exercises
