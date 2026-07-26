@@ -21,15 +21,20 @@ export default function Auth() {
     outline:"none", fontFamily:"inherit", marginBottom:12,
   };
 
-  const handle = async () => {
+ const handle = async () => {
     setLoading(true); setError(null); setMessage(null);
-    if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message || JSON.stringify(error));
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) setError(error.message || JSON.stringify(error));
-      else setMessage("Controlla la tua email per confermare la registrazione!");
+    try {
+      if (mode === "login") {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) setError(JSON.stringify(error));
+        else if (!data?.session) setError("Login fallito — riprova");
+      } else {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) setError(JSON.stringify(error));
+        else setMessage("Registrazione completata! Ora accedi.");
+      }
+    } catch(e) {
+      setError("Errore: " + e.message);
     }
     setLoading(false);
   };
