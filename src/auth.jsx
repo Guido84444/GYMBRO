@@ -25,10 +25,10 @@ export default function Auth() {
     setLoading(true); setError(null); setMessage(null);
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
+      if (error) setError(error.message || JSON.stringify(error));
     } else {
       const { error } = await supabase.auth.signUp({ email, password });
-      if (error) setError(error.message);
+      if (error) setError(error.message || JSON.stringify(error));
       else setMessage("Controlla la tua email per confermare la registrazione!");
     }
     setLoading(false);
