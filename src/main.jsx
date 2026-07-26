@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import GymBro from './app.jsx'
-import Auth from './Auth.jsx'
+import Auth from './auth.jsx'
 import { supabase } from './supabase.js'
 
 function Root() {
