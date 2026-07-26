@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "./supabase.js";
+
 
 // ─── TEMI ─────────────────────────────────────────────────────────────────────
 const DARK = {
@@ -1055,7 +1057,7 @@ function SchedaSelector({ visibleBuiltin, customSchede, activeId, C, onSelect, o
   );
 }
 
-export default function GymBro() {
+export default function GymBro({ session }) {
   const [darkMode,setDarkMode]=useState(()=>{ try{return localStorage.getItem("gymbro_dark")!=="false";}catch{return true;} });
   const C=darkMode?DARK:LIGHT;
   const [tab,setTab]=useState("workout");
@@ -1239,6 +1241,11 @@ export default function GymBro() {
             <button onClick={()=>setDarkMode(d=>!d)} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:9,padding:"6px 9px",cursor:"pointer",fontSize:18,lineHeight:1}}>
               {darkMode?"☀️":"🌙"}
             </button>
+            <button onClick={async()=>{ await supabase.auth.signOut(); }}
+  style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:9,
+    padding:"6px 9px",cursor:"pointer",fontSize:14,color:C.textDim,lineHeight:1}}>
+  ↩
+</button>
           </div>
         </div>
         <div style={{display:"flex"}}>
