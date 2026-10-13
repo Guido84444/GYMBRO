@@ -3,7 +3,7 @@ import { supabase } from './supabase.js';
 // ── SESSIONI ──────────────────────────────────────────────────────────────────
 
 export async function saveSessioDB(session, userId) {
-  const { error } = await supabase.from('sessions').upsert({
+  const payload = {
     id: session.id,
     user_id: userId,
     name: session.name,
@@ -13,7 +13,10 @@ export async function saveSessioDB(session, userId) {
     kcal: session.kcal,
     exercises: session.exercises,
     created_at: new Date(session.date).toISOString(),
-  });
+  };
+  console.log('Saving session payload:', JSON.stringify(payload));
+  const { error } = await supabase.from('sessions').upsert(payload);
+  if (error) console.log('Supabase error:', JSON.stringify(error));
   return error;
 }
 
