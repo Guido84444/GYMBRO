@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "./supabase.js";
+import { saveSessioDB, loadSessioniDB, deleteSessioneDB } from './db.js';
 
 
 // ─── TEMI ─────────────────────────────────────────────────────────────────────
@@ -1064,7 +1065,7 @@ export default function GymBro({ session }) {
   const [bodyKg,setBodyKg]=useState(()=>{ try{return parseFloat(localStorage.getItem("gymbro_bodykg")||"0");}catch{return 0;} });
   const [activeId,setActiveId]=useState(()=>localStorage.getItem("gymbro_scheda")||"a");
   const [customSchede,setCustomSchede]=useState(()=>{ try{return JSON.parse(localStorage.getItem("gymbro_custom_schede")||"[]");}catch{return[];} });
-  const [history,setHistory]=useState(()=>{ try{return JSON.parse(localStorage.getItem("gymbro_history")||"[]");}catch{return[];} });
+  const [history, setHistory] = useState([]);
   const [sessName,setSessName]=useState("");
   const [exercises,setExercises]=useState([]);
   const [draftBanner,setDraftBanner]=useState(false); // banner ripristino bozza
@@ -1103,7 +1104,10 @@ export default function GymBro({ session }) {
   useEffect(()=>{ try{localStorage.setItem("gymbro_scheda",activeId);}catch{} },[activeId]);
   useEffect(()=>{ try{localStorage.setItem("gymbro_custom_schede",JSON.stringify(customSchede));}catch{} },[customSchede]);
   useEffect(()=>{ try{localStorage.setItem("gymbro_hidden_builtin",JSON.stringify(hiddenBuiltin));}catch{} },[hiddenBuiltin]);
-  useEffect(()=>{ try{localStorage.setItem("gymbro_history",JSON.stringify(history));}catch{} },[history]);
+    useEffect(()=>{
+    if (!session?.user?.id) return;
+    loadSessioniDB(session.user.id).then(data => setHistory(data));
+  }, [session]);
 
   // ── Controlla bozza al primo avvio ──
   useEffect(()=>{
@@ -1166,14 +1170,15 @@ export default function GymBro({ session }) {
   const totalSeries=exercises.reduce((a,e)=>a+(e.sets||0),0);
   const totalVol=exercises.reduce((a,e)=>a+(e.seriesData||[]).filter(s=>s.done).reduce((b,s)=>b+(parseFloat(s.kg)||0)*(parseFloat(s.reps)||0),0),0);
 
-  const saveSession=(duration,metKcal)=>{
+   const saveSession=async(duration,metKcal)=>{
     const kcal=metKcal||Math.round(exercises.reduce((a,e)=>a+calcCalories(e,bodyKg),0));
     const sess={id:uid(),name:sessName||activeScheda.name,date:Date.now(),schedaId:activeId,bodyKg,duration,kcal,exercises:exercises.map(e=>({...e}))};
-    setHistory(prev=>[...prev,sess]);
-    try { localStorage.removeItem("gymbro_draft"); } catch {} // cancella bozza
+    const error = await saveSessioDB(sess, session.user.id);
+    if (error) { showToast("Errore salvataggio","❌",DARK.red); return; }
+    setHistory(prev=>[sess,...prev]);
+    try { localStorage.removeItem("gymbro_draft"); } catch {}
     showToast("Sessione salvata!","✅",DARK.green);
   };
-
   const restoreDraft=()=>{
     try {
       const raw = localStorage.getItem("gymbro_draft");
@@ -1205,7 +1210,12 @@ export default function GymBro({ session }) {
     showToast("Sessione caricata come base","🚀",DARK.purple);
   };
 
-  const deleteHistoryItem=(idx)=>{ const realIdx=history.length-1-idx; setHistory(prev=>prev.filter((_,i)=>i!==realIdx)); };
+    const deleteHistoryItem=async(idx)=>{
+    const sess = [...history].reverse()[idx];
+    if (!sess) return;
+    await deleteSessioneDB(sess.id);
+    setHistory(prev=>prev.filter(s=>s.id!==sess.id));
+  };
 
   const handleBodyKg=(raw)=>{
     const {err}=validateField("kg",raw);
