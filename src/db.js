@@ -4,7 +4,7 @@ import { supabase } from './supabase.js';
 
 export async function saveSessioDB(session, userId) {
   const payload = {
-    id: session.id,
+    id: crypto.randomUUID(),
     user_id: userId,
     name: session.name,
     scheda_id: session.schedaId,
