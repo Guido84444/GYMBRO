@@ -1231,7 +1231,7 @@ export default function GymBro({ session }) {
   html { font-size: 28px; }
   * { box-sizing:border-box; }
   body { font-size: 1rem; }
-  input, textarea, button { font-size: 1rem; font-family: inherit; }
+  input, textarea, button { font-size: 16px; font-family: inherit; }
   input[type=number]{-webkit-appearance:none;-moz-appearance:textfield;}
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
