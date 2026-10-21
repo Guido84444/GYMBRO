@@ -1227,8 +1227,24 @@ export default function GymBro({ session }) {
 
   return (
     <div style={{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:"'DM Sans','DM Mono','Helvetica Neue',sans-serif",maxWidth:480,margin:"0 auto",paddingBottom:90}}>
-      <style>{`* {box-sizing:border-box;} input[type=number]{-webkit-appearance:none;-moz-appearance:textfield;} input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;} @keyframes pulse{from{transform:scale(1);}to{transform:scale(1.06);}} @keyframes urgentPulse{from{opacity:1;}to{opacity:.4;}} textarea{outline:none;} @keyframes toastSlide{0%{opacity:0;transform:translateY(-30px) scale(.95);}8%{opacity:1;transform:translateY(0) scale(1);}88%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-12px) scale(.97);}}`}</style>
-
+      <style>{`
+  html { font-size: 18px; }
+  * { box-sizing:border-box; }
+  body { font-size: 1rem; }
+  input, textarea, button { font-size: 1rem; font-family: inherit; }
+  input[type=number]{-webkit-appearance:none;-moz-appearance:textfield;}
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+  @keyframes pulse{from{transform:scale(1);}to{transform:scale(1.06);}}
+  @keyframes urgentPulse{from{opacity:1;}to{opacity:.4;}}
+  textarea{outline:none;}
+  @keyframes toastSlide{
+    0%{opacity:0;transform:translateY(-30px) scale(.95);}
+    8%{opacity:1;transform:translateY(0) scale(1);}
+    88%{opacity:1;transform:translateY(0) scale(1);}
+    100%{opacity:0;transform:translateY(-12px) scale(.97);}
+  }
+`}</style>
       {/* HEADER */}
       <div style={{padding:"20px 16px 14px",borderBottom:`1px solid ${C.border}`,position:"sticky",top:0,background:C.bg,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
