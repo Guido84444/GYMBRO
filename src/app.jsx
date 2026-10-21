@@ -1156,21 +1156,23 @@ export default function GymBro({ session }) {
     return()=>{ window.removeEventListener("touchstart",init); window.removeEventListener("mousedown",init); window.removeEventListener("touchstart",unlockAudio); };
   },[]);
 
-  const startTimer=useCallback((total,exName,serieIdx)=>{
+const startTimer=useCallback((total,exName,serieIdx)=>{
     clearInterval(recIntRef.current);
     bipStart();
-    setRecovery({total,seconds:total,exName,serieIdx,minimized:false});
+    const endTime = Date.now() + total*1000;
+    setRecovery({total,seconds:total,exName,serieIdx,minimized:false,endTime});
     recIntRef.current=setInterval(()=>{
+      const remaining = Math.round((endTime - Date.now())/1000);
       setRecovery(r=>{
         if(!r) return null;
-        const next=r.seconds-1;
+        const next=Math.max(0,remaining);
         if(next<=5&&next>0) bipTick();
         if(next<=0){ clearInterval(recIntRef.current); bipEnd(); navigator.vibrate?.([200,100,200,100,400]); setTimeout(()=>setRecovery(null),1500); return{...r,seconds:0,minimized:false}; }
         return{...r,seconds:next};
       });
     },1000);
   },[]);
-
+  
   const closeRecovery=()=>{ clearInterval(recIntRef.current); setRecovery(null); };
   const minimizeRecovery=()=>setRecovery(r=>r?{...r,minimized:true}:null);
   const expandRecovery=()=>setRecovery(r=>r?{...r,minimized:false}:null);
