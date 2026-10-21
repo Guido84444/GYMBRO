@@ -320,41 +320,63 @@ function RecoveryMini({ seconds, total, color, onExpand, onSkip }) {
     </div>
   );
 }
-
-// ─── RECOVERY OVERLAY ─────────────────────────────────────────────────────────
 function RecoveryOverlay({ seconds, total, exName, serieIdx, onSkip, onMinimize, C }) {
   const done=seconds<=0, pct=total>0?1-seconds/total:1;
   const r=45, circ=2*Math.PI*r, urgent=seconds<=5&&!done;
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.95)",backdropFilter:"blur(8px)",zIndex:200,
-      display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"3vmin"}}>
-      <div style={{fontSize:"min(3.2vmin,18px)",letterSpacing:5,color:"#888",textTransform:"uppercase"}}>RECUPERO</div>
-      <div style={{fontSize:"min(4.5vmin,26px)",color:"#f0f0f0",fontWeight:700,textAlign:"center",padding:"0 16px"}}>
-        {exName} <span style={{opacity:0.6,fontWeight:500}}>— Serie {serieIdx} ✓</span>
-      </div>
-      <div style={{position:"relative",width:"min(70vmin,420px)",height:"min(70vmin,420px)"}}>
-        <svg width="100%" height="100%" viewBox="0 0 100 100" style={{transform:"rotate(-90deg)"}}>
-          <circle cx="50" cy="50" r={r} fill="none" stroke="#222" strokeWidth="5"/>
-          <circle cx="50" cy="50" r={r} fill="none" stroke={urgent?"#ff4a4a":C.accent} strokeWidth="5"
-            strokeDasharray={`${circ*pct} ${circ}`} strokeLinecap="round" style={{transition:"stroke-dasharray 1s linear,stroke 0.3s"}}/>
-        </svg>
-        <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
-          {done
-            ? <div style={{fontSize:"min(22vmin,130px)",animation:"pulse .4s ease infinite alternate"}}>💪</div>
-            : <div style={{fontSize:"min(20vmin,120px)",fontWeight:800,color:urgent?"#ff4a4a":"#f0f0f0",fontFamily:"monospace",lineHeight:1,animation:urgent?"urgentPulse .5s ease infinite alternate":"none"}}>{seconds}</div>}
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.97)",zIndex:200,
+      display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"space-between",
+      padding:"0 0 0 0"}}>
+
+      {/* LOGO IN ALTO */}
+      <div style={{width:"100%",padding:"20px 24px 16px",borderBottom:"1px solid #1a1a1a",
+        display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <div style={{fontSize:28,fontWeight:900,letterSpacing:-0.5}}>
+          <span style={{color:C.accent}}>GYM</span>
+          <span style={{color:"#f0f0f0"}}>BRO</span>
         </div>
       </div>
-      {!done && (
-        <div style={{display:"flex",gap:"2.5vmin",marginTop:"1vmin"}}>
-          <button onClick={onMinimize} style={{background:"#1a1a1a",color:"#aaa",border:"1px solid #333",borderRadius:14,padding:"min(3vmin,16px) min(6vmin,32px)",fontSize:"min(3.5vmin,17px)",cursor:"pointer",fontWeight:600}}>⬇ Minimizza</button>
-          <button onClick={onSkip} style={{background:"#1a1a1a",color:"#aaa",border:"1px solid #333",borderRadius:14,padding:"min(3vmin,16px) min(6vmin,32px)",fontSize:"min(3.5vmin,17px)",cursor:"pointer",fontWeight:600}}>salta →</button>
+
+      {/* CONTENUTO CENTRALE */}
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",
+        justifyContent:"center",gap:"3vmin",padding:"16px"}}>
+        <div style={{fontSize:"min(3.2vmin,18px)",letterSpacing:5,color:"#888",textTransform:"uppercase"}}>RECUPERO</div>
+        <div style={{fontSize:"min(4.5vmin,24px)",color:"#f0f0f0",fontWeight:700,textAlign:"center",padding:"0 16px"}}>
+          {exName} <span style={{opacity:0.6,fontWeight:500}}>— Serie {serieIdx} ✓</span>
         </div>
-      )}
+        <div style={{position:"relative",width:"min(65vmin,380px)",height:"min(65vmin,380px)"}}>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" style={{transform:"rotate(-90deg)"}}>
+            <circle cx="50" cy="50" r={r} fill="none" stroke="#222" strokeWidth="5"/>
+            <circle cx="50" cy="50" r={r} fill="none" stroke={urgent?"#ff4a4a":C.accent} strokeWidth="5"
+              strokeDasharray={`${circ*pct} ${circ}`} strokeLinecap="round"
+              style={{transition:"stroke-dasharray 1s linear,stroke 0.3s"}}/>
+          </svg>
+          <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            {done
+              ? <div style={{fontSize:"min(22vmin,120px)",animation:"pulse .4s ease infinite alternate"}}>💪</div>
+              : <div style={{fontSize:"min(20vmin,110px)",fontWeight:800,color:urgent?"#ff4a4a":"#f0f0f0",
+                  fontFamily:"monospace",lineHeight:1,
+                  animation:urgent?"urgentPulse .5s ease infinite alternate":"none"}}>{seconds}</div>}
+          </div>
+        </div>
+        {!done && (
+          <div style={{display:"flex",gap:"2.5vmin",marginTop:"1vmin"}}>
+            <button onClick={onMinimize} style={{background:"#1a1a1a",color:"#aaa",border:"1px solid #333",borderRadius:14,padding:"min(3vmin,16px) min(6vmin,32px)",fontSize:"min(3.5vmin,17px)",cursor:"pointer",fontWeight:600}}>⬇ Minimizza</button>
+            <button onClick={onSkip} style={{background:"#1a1a1a",color:"#aaa",border:"1px solid #333",borderRadius:14,padding:"min(3vmin,16px) min(6vmin,32px)",fontSize:"min(3.5vmin,17px)",cursor:"pointer",fontWeight:600}}>salta →</button>
+          </div>
+        )}
+      </div>
+
+      {/* SPAZIO BANNER PUBBLICITARIO (futuro) */}
+      <div style={{width:"100%",minHeight:80,background:"#0a0a0a",borderTop:"1px solid #1a1a1a",
+        display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <div style={{fontSize:12,color:"#333",letterSpacing:2,textTransform:"uppercase"}}>spazio pubblicitario</div>
+      </div>
+
       <style>{`@keyframes pulse{from{transform:scale(1);}to{transform:scale(1.08);}} @keyframes urgentPulse{from{opacity:1;}to{opacity:.4;}}`}</style>
     </div>
   );
 }
-
 // ─── SORTABLE LIST (Pointer Events) ──────────────────────────────────────────
 function SortableList({ items, renderItem, onReorder }) {
   const [dragging, setDragging] = useState(null);
