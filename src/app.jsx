@@ -939,21 +939,13 @@ function StoricoView({ history, bodyKg, activeId, schedaLabel, onLoad, onUseAsBa
   );
 }
 
-// ─── SESSION TIMER ────────────────────────────────────────────────────────────
-function SessionTimer({ color, bodyKg, exercises, onSave, C, onRunningChange }) {
-  const [state,setState]=useState("idle");
-  const [elapsed,setElapsed]=useState(0);
-  const startRef=useRef(null), intRef=useRef(null);
-  const start=()=>{ startRef.current=Date.now()-elapsed*1000; intRef.current=setInterval(()=>setElapsed(Math.floor((Date.now()-startRef.current)/1000)),1000); setState("running"); onRunningChange?.(true); };
-  const stop=()=>{ clearInterval(intRef.current); setState("done"); onRunningChange?.(false); };
-  const reset=()=>{ clearInterval(intRef.current); setState("idle"); setElapsed(0); onRunningChange?.(false); };
-  useEffect(()=>()=>clearInterval(intRef.current),[]);
+function SessionTimer({ color, bodyKg, state, elapsed, onStart, onStop, onReset, onSave, C }) {
   const metKcal=bodyKg>0?Math.round(5.0*bodyKg*(elapsed/3600)):0;
-  if (state==="idle") return <button onClick={start} style={{width:"100%",background:color,color:"#000",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:800,cursor:"pointer",marginBottom:14}}>▶ Inizia allenamento</button>;
+  if (state==="idle") return <button onClick={onStart} style={{width:"100%",background:color,color:"#000",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:800,cursor:"pointer",marginBottom:14}}>▶ Inizia allenamento</button>;
   if (state==="running") return (
     <div style={{display:"flex",gap:8,marginBottom:14,alignItems:"center"}}>
       <div style={{flex:1,background:C.card,borderRadius:12,padding:"12px 16px",border:`1px solid ${C.border}`,fontFamily:"monospace",fontSize:22,fontWeight:800,color,textAlign:"center"}}>{fmtTime(elapsed)}</div>
-      <button onClick={stop} style={{background:C.red,color:"#fff",border:"none",borderRadius:12,padding:"12px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>⏹ Fine</button>
+      <button onClick={onStop} style={{background:C.red,color:"#fff",border:"none",borderRadius:12,padding:"12px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>⏹ Fine</button>
     </div>
   );
   return (
@@ -965,7 +957,7 @@ function SessionTimer({ color, bodyKg, exercises, onSave, C, onRunningChange }) 
       </div>
       <div style={{fontSize:11,color:C.textDim,marginBottom:10}}>⚠ Stima orientativa ±30% — basata su MET 5.0 × peso × durata</div>
       <div style={{display:"flex",gap:8}}>
-        <button onClick={reset} style={{flex:1,background:C.surface,color:C.textDim,border:`1px solid ${C.border}`,borderRadius:9,padding:"8px 0",cursor:"pointer",fontSize:13}}>↺ Reset</button>
+        <button onClick={onReset} style={{flex:1,background:C.surface,color:C.textDim,border:`1px solid ${C.border}`,borderRadius:9,padding:"8px 0",cursor:"pointer",fontSize:13}}>↺ Reset</button>
         <button onClick={()=>onSave(elapsed,metKcal)} style={{flex:1,background:color,color:"#000",border:"none",borderRadius:9,padding:"8px 0",cursor:"pointer",fontWeight:700,fontSize:13}}>💾 Salva sessione</button>
       </div>
     </div>
@@ -1074,6 +1066,13 @@ export default function GymBro({ session }) {
   const [editName,setEditName]=useState(false);
   const [hiddenBuiltin,setHiddenBuiltin]=useState(()=>{ try{return JSON.parse(localStorage.getItem("gymbro_hidden_builtin")||"[]");}catch{return[];} });
   const [workoutRunning,setWorkoutRunning]=useState(false);
+  const [timerState,setTimerState]=useState("idle");
+  const [timerElapsed,setTimerElapsed]=useState(0);
+  const timerStartRef=useRef(null);
+  const timerIntRef=useRef(null);
+  const timerStart=()=>{ timerStartRef.current=Date.now()-timerElapsed*1000; timerIntRef.current=setInterval(()=>setTimerElapsed(Math.floor((Date.now()-timerStartRef.current)/1000)),1000); setTimerState("running"); setWorkoutRunning(true); };
+  const timerStop=()=>{ clearInterval(timerIntRef.current); setTimerState("done"); setWorkoutRunning(false); };
+  const timerReset=()=>{ clearInterval(timerIntRef.current); setTimerState("idle"); setTimerElapsed(0); setWorkoutRunning(false); };
   const [bodyKgErr,setBodyKgErr]=useState(null);
   const [toast,setToast]=useState(null);
   const toastRef=useRef(null);
@@ -1338,8 +1337,8 @@ export default function GymBro({ session }) {
               ))}
             </div>
 
-            <SessionTimer color={schedaColor} bodyKg={bodyKg} exercises={exercises} onSave={saveSession} C={C} onRunningChange={setWorkoutRunning}/>
-
+            <SessionTimer color={schedaColor} bodyKg={bodyKg} state={timerState} elapsed={timerElapsed} onStart={timerStart} onStop={timerStop} onReset={timerReset} onSave={saveSession} C={C}/>
+            
             {exercises.length>1&&<div style={{fontSize:11,color:C.textDim,marginBottom:8,paddingLeft:2}}>⠿ tieni premuto sull'icona per riordinare</div>}
             <SortableList items={exercises} onReorder={reorderEx} renderItem={(e,idx,dragHandlers)=>(
               <ExCard key={e.id} ex={e} color={schedaColor} bodyKg={bodyKg} history={history} C={C} dragHandlers={dragHandlers}
