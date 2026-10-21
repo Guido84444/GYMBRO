@@ -324,7 +324,7 @@ function RecoveryOverlay({ seconds, total, exName, serieIdx, onSkip, onMinimize,
   const done=seconds<=0, pct=total>0?1-seconds/total:1;
   const r=45, circ=2*Math.PI*r, urgent=seconds<=5&&!done;
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.97)",zIndex:200,
+    <div style={{position:"fixed",inset:0,background:"#000")",zIndex:200,
       display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"space-between",
       padding:"0 0 0 0"}}>
 
