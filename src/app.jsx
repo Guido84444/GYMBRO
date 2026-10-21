@@ -368,9 +368,9 @@ function RecoveryOverlay({ seconds, total, exName, serieIdx, onSkip, onMinimize,
       </div>
 
       {/* SPAZIO BANNER PUBBLICITARIO (futuro) */}
-      <div style={{width:"100%",minHeight:80,background:"#0a0a0a",borderTop:"1px solid #1a1a1a",
+      <div style={{width:"100%",minHeight:120,background:"#0a0a0a",borderTop:"1px solid #1a1a1a",
         display:"flex",alignItems:"center",justifyContent:"center"}}>
-        <div style={{fontSize:12,color:"#333",letterSpacing:2,textTransform:"uppercase"}}>spazio pubblicitario</div>
+        <div style={{fontSize:13,color:"#333",letterSpacing:2,textTransform:"uppercase"}}>spazio pubblicitario</div>
       </div>
 
       <style>{`@keyframes pulse{from{transform:scale(1);}to{transform:scale(1.08);}} @keyframes urgentPulse{from{opacity:1;}to{opacity:.4;}}`}</style>
