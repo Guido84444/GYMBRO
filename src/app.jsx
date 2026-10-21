@@ -1228,7 +1228,7 @@ export default function GymBro({ session }) {
   return (
     <div style={{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:"'DM Sans','DM Mono','Helvetica Neue',sans-serif",maxWidth:480,margin:"0 auto",paddingBottom:90}}>
       <style>{`
-  html { font-size: 18px; }
+  html { font-size: 20px; }
   * { box-sizing:border-box; }
   body { font-size: 1rem; }
   input, textarea, button { font-size: 1rem; font-family: inherit; }
